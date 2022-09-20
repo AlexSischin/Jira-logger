@@ -91,8 +91,8 @@ if __name__ == '__main__':
             ARG_JIRA_URL: args.jira_url,
             ARG_FILE_PATH: args.filepath,
             ARG_ENCODING: args.encoding,
-            ARG_PASSWORD: args.user,
-            ARG_USER: args.password,
+            ARG_USER: args.user,
+            ARG_PASSWORD: args.password,
             ARG_START_DATE: args.start_date
         }
 
