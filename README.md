@@ -13,6 +13,8 @@ where:
 - *end_time* - in 24h format *hh:mm*. Example: 15:02
 - *comment* - any single line text. Optional
 
+Requires python 3.10.
+
 ### How to run
 
 ```
