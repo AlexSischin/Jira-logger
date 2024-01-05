@@ -6,8 +6,8 @@ import time
 
 import yarl
 
-import jira as ji
-import log as lo
+from jira_client import IssueLog, JiraClient, EXEC_ARGS
+from log import Log, read_log
 
 log_batch_size = 1000
 logger = logging.getLogger(__name__)
@@ -27,11 +27,11 @@ def read_batch(iterable, n=log_batch_size):
             return
 
 
-def create_jira_log(log: lo.Log, start_date: datetime.datetime):
-    return ji.IssueLog(log.issue_id,
-                       log.end_time - log.start_time,
-                       comment=log.comment,
-                       start_date=start_date)
+def create_jira_log(log: Log, start_date: datetime.datetime):
+    return IssueLog(log.issue_id,
+                    log.end_time - log.start_time,
+                    comment=log.comment,
+                    start_date=start_date)
 
 
 async def log_logs(jira_url, resource_file, resource_encoding, username, password, start_date):
@@ -42,15 +42,15 @@ async def log_logs(jira_url, resource_file, resource_encoding, username, passwor
     total_count = 0
     successes = 0
     logged_time = datetime.timedelta(0)
-    async with ji.JiraClient(jira_url) as jira:
+    async with JiraClient(jira_url) as jira:
         await jira.login(username, password)
         with resource_file.open('r', encoding=resource_encoding) as log_file:
-            for log_batch in read_batch(lo.read_log(log_file)):
+            for log_batch in read_batch(read_log(log_file)):
                 jira_logs = [convert_log(log) for log in log_batch]
                 succeeded_execs, failed_execs = await jira.log_works(jira_logs)
                 total_count += len(jira_logs)
                 successes += len(succeeded_execs)
-                logged_deltas = [exe[ji.EXEC_ARGS][0].time_logged for exe in succeeded_execs]
+                logged_deltas = [exe[EXEC_ARGS][0].time_logged for exe in succeeded_execs]
                 logged_time += sum(logged_deltas, start=datetime.timedelta(0))
     end_time = time.time()
     total_time = '{:.2f}'.format(end_time - start_time)
