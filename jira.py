@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import datetime, timedelta
 from functools import wraps
 from json import dumps
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Union
 
 from aiohttp import ClientSession
 from yarl import URL
@@ -60,7 +60,7 @@ class JiraClient:
     _create_log_path = '/rest/api/2/issue/{issue_id}/worklog'
     _internal_ids_cache_size = 10000
 
-    def __init__(self, base_url: str | URL) -> None:
+    def __init__(self, base_url: Union[str, URL]) -> None:
         super().__init__()
         self._base_url = URL(base_url)
 
